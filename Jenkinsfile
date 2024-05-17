@@ -11,7 +11,6 @@ pipeline {
             steps {
                 script {
                     echo 'Building the code using Maven...'
-                    // Actual command: sh 'mvn clean package'
                 }
             }
         }
@@ -19,7 +18,6 @@ pipeline {
             steps {
                 script {
                     echo 'Running unit tests using JUnit and integration tests...'
-                    // Actual command: sh 'mvn test'
                 }
             }
             post {
@@ -42,7 +40,6 @@ pipeline {
             steps {
                 script {
                     echo 'Analyzing code using SonarQube...'
-                    // Actual command: sh 'mvn sonar:sonar'
                 }
             }
         }
@@ -50,7 +47,6 @@ pipeline {
             steps {
                 script {
                     echo 'Performing security scan using OWASP Dependency-Check...'
-                    // Actual command: sh 'mvn dependency-check:check'
                 }
             }
             post {
@@ -73,7 +69,6 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to staging server...'
-                    // Actual command: sh 'scp target/my-app.war user@staging-server:/path/to/deploy'
                 }
             }
         }
@@ -81,7 +76,6 @@ pipeline {
             steps {
                 script {
                     echo 'Running integration tests on staging environment...'
-                    // Actual command: sh 'mvn verify -Pstaging'
                 }
             }
         }
@@ -89,7 +83,6 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to production server...'
-                    // Actual command: sh 'scp target/my-app.war user@production-server:/path/to/deploy'
                 }
             }
         }
