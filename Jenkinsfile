@@ -25,7 +25,7 @@ pipeline {
                     script {
                         echo 'Sending notification email for Unit and Integration Tests stage...'
                         emailext (
-                            to: "${itsmyemail1228@gmail.com}",
+                            to: "${RECIPIENT_EMAIL}",
                             subject: "Jenkins Pipeline - Unit and Integration Tests: ${currentBuild.currentResult}",
                             body: """Stage: Unit and Integration Tests
                             Result: ${currentBuild.currentResult}
@@ -54,7 +54,7 @@ pipeline {
                     script {
                         echo 'Sending notification email for Security Scan stage...'
                         emailext (
-                            to: "${itsmyemail1228@gmail.com}",
+                            to: "${RECIPIENT_EMAIL}",
                             subject: "Jenkins Pipeline - Security Scan: ${currentBuild.currentResult}",
                             body: """Stage: Security Scan
                             Result: ${currentBuild.currentResult}
@@ -92,7 +92,7 @@ pipeline {
             script {
                 echo 'Sending notification email for the overall pipeline status...'
                 emailext (
-                    to: "${itsmyemail1228@gmail.com}",
+                    to: "${RECIPIENT_EMAIL}",
                     subject: "Jenkins Pipeline - Overall Status: ${currentBuild.currentResult}",
                     body: """Pipeline: ${env.JOB_NAME}
                     Build: #${env.BUILD_NUMBER}
