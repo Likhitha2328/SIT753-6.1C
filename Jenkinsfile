@@ -2,12 +2,7 @@ pipeline {
     agent any
     
     stages {
-        stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', credentialsId: 'Likhitha2328', url: 'https://github.com/Likhitha2328/SIT753-6.1C.git'
-            }
-        }
+       
         stage('Build') {
             steps {
                 echo 'Building the code using Maven...'
