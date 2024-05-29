@@ -1,10 +1,5 @@
 pipeline {
     agent any
-
-    environment {
-        EMAIL_RECIPIENTS = 'itsmyemail1228@gmail.com' // Update this with your email
-    }
-
     stages {
         stage('Build') {
             steps {
@@ -29,7 +24,7 @@ pipeline {
                         emailext (
                             subject: "Unit and Integration Tests: ${currentBuild.currentResult}",
                             body: "The Unit and Integration Tests stage has finished with status: ${currentBuild.currentResult}. Please check the attached logs for more details.",
-                            to: "${env.EMAIL_RECIPIENTS}",
+                            to: "itsmyemail1228@gmail.com",
                             attachLog: true
                         )
                     }
