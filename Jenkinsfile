@@ -1,72 +1,94 @@
 pipeline {
     agent any
-
-    environment {
-        DIRECTORY_PATH = '/Dashboard/SIT753-6.1C'
-        TESTING_ENVIRONMENT = 'staging'
-        PRODUCTION_ENVIRONMENT = 'production'
-    }
-
     stages {
         stage('Build') {
             steps {
-                echo "Fetch the source code from the directory path specified by the environment variable: ${env.DIRECTORY_PATH}"
-                echo "Compile the code and generate any necessary artifacts"
+                echo 'Performing build...'
             }
-        }
-        stage('Test') {
-            steps {
-                echo "Unit tests"
-                echo "Integration tests"
-            }
-        }
-        stage('Code Quality Check') {
-            steps {
-                echo "Check the quality of the code"
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo "Deploy the application to a testing environment specified by the environment variable: ${env.TESTING_ENVIRONMENT}"
-            }
-        }
-        stage('Approval') {
-            steps {
-                script {
-                    echo "Waiting for manual approval..."
-                    sleep 10 // simulate a manual approval process
+            post {
+                success {
+                    mail to: 'itsmyemail1228@gmail.com',
+                    subject: 'Pipeline Success',
+                    body: 'The pipeline completed successfully.'
                 }
+                failure {
+                             mail to: 'itsmyemail1228@gmail.com',
+                            subject: 'Pipeline Failure',
+                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                }
+            }
+        }
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Running unit and integration tests...'
+                // You can run tests using appropriate tools here
+            }
+            post {
+                success {
+                             mail to: 'itsmyemail1228@gmail.com',
+                            subject: 'Pipeline Success',
+                             body: 'The pipeline completed successfully.'
+                }
+                failure {
+                             mail to: 'itsmyemail1228@gmail.com',
+                             subject: 'Pipeline Failure',
+                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                }
+            }
+        }
+        stage('Code Analysis') {
+            steps {
+                echo 'Performing code analysis...'
+                // Integrate a code analysis tool using Jenkins plugin
+            }
+            post {
+                success {
+                             mail to: 'itsmyemail1228@gmail.com',
+                             subject: 'Pipeline Success',
+                             body: 'The pipeline completed successfully.'
+                }
+                failure {
+                             mail to: 'itsmyemail1228@gmail.com',
+                             subject: 'Pipeline Failure',
+                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                }
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                echo 'Performing security scan...'
+                // Perform a security scan using a specific tool, such as SonarQube or OWASP ZAP
+            }
+            post {
+                success {
+                             mail to: 'itsmyemail1228@gmail.com',
+                             subject: 'Pipeline Success',
+                             body: 'The pipeline completed successfully.'
+                }
+                failure {
+                             mail to: 'itsmyemail1228@gmail.com',
+                             subject: 'Pipeline Failure',
+                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                }
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying to staging...'
+                // Deploy the application to a staging server using a specific tool, such as AWS Elastic Beanstalk or Docker
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on staging...'
+                // Run integration tests on the staging environment using a specific tool, such as Selenium or JMeter
             }
         }
         stage('Deploy to Production') {
             steps {
-                echo "Deploy the code to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
+                echo 'Deploying to production...'
+                // Deploy the application to a production server using a specific tool, such as AWS Elastic Beanstalk or Docker
             }
-        }
-    }
-
-    post {
-        success {
-            emailext (
-                to: 'itsmyemail1228@gmail.com',
-                subject: "Pipeline Success: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                body: """The pipeline has completed successfully.
-                         Job: ${env.JOB_NAME}
-                         Build Number: ${env.BUILD_NUMBER}
-                         
-                         See details at: ${env.BUILD_URL}"""
-            )
-        }
-        failure {
-            emailext (
-                to: 'itsmyemail1228@gmail.com',
-                subject: "Pipeline Failure: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
-                body: """The pipeline has failed.
-                         Job: ${env.JOB_NAME}
-                         Build Number: ${env.BUILD_NUMBER}
-                         
-                         See details at: ${env.BUILD_URL}"""
-            )
         }
     }
 }
