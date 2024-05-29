@@ -1,104 +1,170 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('Compile') {
             steps {
                 script {
-                    echo 'Building the project using Maven...'
-                    // Example build tool: Maven
-                    // sh 'mvn clean install'
-                }
-            }
-        }
-        stage('Unit and Integration Tests') {
-            steps {
-                script {
-                    echo 'Running unit tests and integration tests using JUnit and Selenium...'
-                    // Example test tools: JUnit for unit tests, Selenium for integration tests
-                    // sh 'mvn test'
+                    try {
+                        echo 'Building the project...'
+                        // Add your build steps here
+                        currentBuild.description = "Build Success"
+                    } catch (Exception e) {
+                        currentBuild.description = "Build Failed: ${e.message}"
+                        throw e
+                    }
                 }
             }
             post {
                 always {
-                    script {
-                        emailext (
-                            subject: "Unit and Integration Tests: ${currentBuild.currentResult}",
-                            body: "The Unit and Integration Tests stage has finished with status: ${currentBuild.currentResult}. Please check the attached logs for more details.",
-                            to: "itsmyemail1228@gmail.com",
-                            attachLog: true
-                        )
+                    archiveArtifacts artifacts: '**/build.log', allowEmptyArchive: true
+                }
+                success {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Success',
+                        body: """The pipeline has finished successfully.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
+                }
+                failure {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Failure',
+                        body: """The pipeline encountered an error. Please check the Jenkins logs for more information.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
+                }
+            }
+        }
+        stage('Run Unit and Integration Tests') {
+            steps {
+                script {
+                    try {
+                        echo 'Executing unit and integration tests...'
+                        // Add your test steps here
+                        currentBuild.description = "Tests Success"
+                    } catch (Exception e) {
+                        currentBuild.description = "Tests Failed: ${e.message}"
+                        throw e
                     }
-                }
-            }
-        }
-        stage('Code Analysis') {
-            steps {
-                script {
-                    echo 'Performing code analysis using SonarQube...'
-                    // Example code analysis tool: SonarQube
-                    // sh 'sonar-scanner'
-                }
-            }
-        }
-        stage('Security Scan') {
-            steps {
-                script {
-                    echo 'Performing security scan using OWASP ZAP...'
-                    // Example security scan tool: OWASP ZAP
-                    // sh 'zap-cli start && zap-cli scan'
                 }
             }
             post {
                 always {
-                    script {
-                        emailext (
-                            subject: "Security Scan: ${currentBuild.currentResult}",
-                            body: "The Security Scan stage has finished with status: ${currentBuild.currentResult}. Please check the attached logs for more details.",
-                            to: "${env.EMAIL_RECIPIENTS}",
-                            attachLog: true
-                        )
+                    archiveArtifacts artifacts: '**/test.log', allowEmptyArchive: true
+                }
+                success {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Success',
+                        body: """The pipeline has finished successfully.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
+                }
+                failure {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Failure',
+                        body: """The pipeline encountered an error. Please check the Jenkins logs for more information.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
+                }
+            }
+        }
+        stage('Static Code Analysis') {
+            steps {
+                script {
+                    try {
+                        echo 'Running static code analysis...'
+                        // Integrate and configure a code analysis tool via Jenkins plugin
+                        currentBuild.description = "Code Analysis Success"
+                    } catch (Exception e) {
+                        currentBuild.description = "Code Analysis Failed: ${e.message}"
+                        throw e
                     }
                 }
             }
-        }
-        stage('Deploy to Staging') {
-            steps {
-                script {
-                    echo 'Deploying application to staging environment on AWS EC2...'
-                    // Example deployment tool: AWS CLI for EC2 deployment
-                    // sh 'aws deploy create-deployment ...'
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/code_analysis.log', allowEmptyArchive: true
+                }
+                success {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Success',
+                        body: """The pipeline has finished successfully.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
+                }
+                failure {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Failure',
+                        body: """The pipeline encountered an error. Please check the Jenkins logs for more information.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
                 }
             }
         }
-        stage('Integration Tests on Staging') {
+        stage('Perform Security Scanning') {
             steps {
                 script {
-                    echo 'Running integration tests in staging environment using Selenium...'
-                    // Example integration test tool: Selenium
-                    // sh 'selenium test ...'
+                    try {
+                        echo 'Conducting security scan...'
+                        // Use a security scanning tool like SonarQube or OWASP ZAP
+                        currentBuild.description = "Security Scan Success"
+                    } catch (Exception e) {
+                        currentBuild.description = "Security Scan Failed: ${e.message}"
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/security_scan.log', allowEmptyArchive: true
+                }
+                success {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Success',
+                        body: """The pipeline has finished successfully.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
+                }
+                failure {
+                    emailext(
+                        to: 'itsmyemail1228@gmail.com',
+                        subject: 'Pipeline Failure',
+                        body: """The pipeline encountered an error. Please check the Jenkins logs for more information.<br>
+                        Logs:<br>
+                        ${currentBuild.description}"""
+                    )
                 }
             }
         }
-        stage('Deploy to Production') {
+        stage('Stage Deployment') {
             steps {
-                script {
-                    echo 'Deploying application to production environment on AWS EC2...'
-                    // Example deployment tool: AWS CLI for EC2 deployment
-                    // sh 'aws deploy create-deployment ...'
-                }
+                echo 'Deploying application to staging environment...'
+                // Use a deployment tool like AWS Elastic Beanstalk or Docker for staging deployment
             }
         }
-    }
-
-    post {
-        always {
-            script {
-                emailext (
-                    subject: "Pipeline: ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                    body: "The pipeline has finished with status: ${currentBuild.currentResult}. Please check the attached logs for more details.",
-                    to: "${env.EMAIL_RECIPIENTS}",
-                    attachLog: true
-                )
+        stage('Staging Integration Testing') {
+            steps {
+                echo 'Executing integration tests in staging environment...'
+                // Run integration tests in staging using a tool like Selenium or JMeter
+            }
+        }
+        stage('Production Deployment') {
+            steps {
+                echo 'Deploying application to production environment...'
+                // Use a deployment tool like AWS Elastic Beanstalk or Docker for production deployment
             }
         }
     }
