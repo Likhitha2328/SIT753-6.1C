@@ -26,13 +26,11 @@ pipeline {
             post {
                 always {
                     script {
-                        def log = currentBuild.rawBuild.getLog(1000).join("\n")
                         emailext (
                             subject: "Unit and Integration Tests: ${currentBuild.currentResult}",
-                            body: """<p>The Unit and Integration Tests stage has finished with status: ${currentBuild.currentResult}</p>
-                                     <p>Logs:</p><pre>${log}</pre>""",
+                            body: "The Unit and Integration Tests stage has finished with status: ${currentBuild.currentResult}. Please check the attached logs for more details.",
                             to: "${env.EMAIL_RECIPIENTS}",
-                            mimeType: 'text/html'
+                            attachLog: true
                         )
                     }
                 }
@@ -58,13 +56,11 @@ pipeline {
             post {
                 always {
                     script {
-                        def log = currentBuild.rawBuild.getLog(1000).join("\n")
                         emailext (
                             subject: "Security Scan: ${currentBuild.currentResult}",
-                            body: """<p>The Security Scan stage has finished with status: ${currentBuild.currentResult}</p>
-                                     <p>Logs:</p><pre>${log}</pre>""",
+                            body: "The Security Scan stage has finished with status: ${currentBuild.currentResult}. Please check the attached logs for more details.",
                             to: "${env.EMAIL_RECIPIENTS}",
-                            mimeType: 'text/html'
+                            attachLog: true
                         )
                     }
                 }
@@ -102,13 +98,11 @@ pipeline {
     post {
         always {
             script {
-                def log = currentBuild.rawBuild.getLog(1000).join("\n")
                 emailext (
                     subject: "Pipeline: ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                    body: """<p>The pipeline has finished with status: ${currentBuild.currentResult}</p>
-                             <p>Logs:</p><pre>${log}</pre>""",
+                    body: "The pipeline has finished with status: ${currentBuild.currentResult}. Please check the attached logs for more details.",
                     to: "${env.EMAIL_RECIPIENTS}",
-                    mimeType: 'text/html'
+                    attachLog: true
                 )
             }
         }
