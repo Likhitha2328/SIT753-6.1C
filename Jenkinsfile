@@ -1,93 +1,115 @@
 pipeline {
     agent any
+
+    environment {
+        EMAIL_RECIPIENTS = 'itsmyemail1228@gmail.com' // Update this with your email
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo 'Performing build...'
-            }
-            post {
-                success {
-                    mail to: 'itsmyemail1228@gmail.com',
-                    subject: 'Pipeline Success',
-                    body: 'The pipeline completed successfully.'
-                }
-                failure {
-                             mail to: 'itsmyemail1228@gmail.com',
-                            subject: 'Pipeline Failure',
-                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                script {
+                    echo 'Building the project using Maven...'
+                    // Example build tool: Maven
+                    // sh 'mvn clean install'
                 }
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests...'
-                // You can run tests using appropriate tools here
+                script {
+                    echo 'Running unit tests and integration tests using JUnit and Selenium...'
+                    // Example test tools: JUnit for unit tests, Selenium for integration tests
+                    // sh 'mvn test'
+                }
             }
             post {
-                success {
-                             mail to: 'itsmyemail1228@gmail.com',
-                            subject: 'Pipeline Success',
-                             body: 'The pipeline completed successfully.'
-                }
-                failure {
-                             mail to: 'itsmyemail1228@gmail.com',
-                             subject: 'Pipeline Failure',
-                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                always {
+                    script {
+                        def log = currentBuild.rawBuild.getLog(1000).join("\n")
+                        emailext (
+                            subject: "Unit and Integration Tests: ${currentBuild.currentResult}",
+                            body: """<p>The Unit and Integration Tests stage has finished with status: ${currentBuild.currentResult}</p>
+                                     <p>Logs:</p><pre>${log}</pre>""",
+                            to: "${env.EMAIL_RECIPIENTS}",
+                            mimeType: 'text/html'
+                        )
+                    }
                 }
             }
         }
         stage('Code Analysis') {
             steps {
-                echo 'Performing code analysis...'
-                // Integrate a code analysis tool using Jenkins plugin
-            }
-            post {
-                success {
-                             mail to: 'itsmyemail1228@gmail.com',
-                             subject: 'Pipeline Success',
-                             body: 'The pipeline completed successfully.'
-                }
-                failure {
-                             mail to: 'itsmyemail1228@gmail.com',
-                             subject: 'Pipeline Failure',
-                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                script {
+                    echo 'Performing code analysis using SonarQube...'
+                    // Example code analysis tool: SonarQube
+                    // sh 'sonar-scanner'
                 }
             }
         }
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan...'
-                // Perform a security scan using a specific tool, such as SonarQube or OWASP ZAP
+                script {
+                    echo 'Performing security scan using OWASP ZAP...'
+                    // Example security scan tool: OWASP ZAP
+                    // sh 'zap-cli start && zap-cli scan'
+                }
             }
             post {
-                success {
-                             mail to: 'itsmyemail1228@gmail.com',
-                             subject: 'Pipeline Success',
-                             body: 'The pipeline completed successfully.'
-                }
-                failure {
-                             mail to: 'itsmyemail1228@gmail.com',
-                             subject: 'Pipeline Failure',
-                             body: 'The pipeline failed. Please check the Jenkins logs for more details.'
+                always {
+                    script {
+                        def log = currentBuild.rawBuild.getLog(1000).join("\n")
+                        emailext (
+                            subject: "Security Scan: ${currentBuild.currentResult}",
+                            body: """<p>The Security Scan stage has finished with status: ${currentBuild.currentResult}</p>
+                                     <p>Logs:</p><pre>${log}</pre>""",
+                            to: "${env.EMAIL_RECIPIENTS}",
+                            mimeType: 'text/html'
+                        )
+                    }
                 }
             }
         }
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging...'
-                // Deploy the application to a staging server using a specific tool, such as AWS Elastic Beanstalk or Docker
+                script {
+                    echo 'Deploying application to staging environment on AWS EC2...'
+                    // Example deployment tool: AWS CLI for EC2 deployment
+                    // sh 'aws deploy create-deployment ...'
+                }
             }
         }
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging...'
-                // Run integration tests on the staging environment using a specific tool, such as Selenium or JMeter
+                script {
+                    echo 'Running integration tests in staging environment using Selenium...'
+                    // Example integration test tool: Selenium
+                    // sh 'selenium test ...'
+                }
             }
         }
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production...'
-                // Deploy the application to a production server using a specific tool, such as AWS Elastic Beanstalk or Docker
+                script {
+                    echo 'Deploying application to production environment on AWS EC2...'
+                    // Example deployment tool: AWS CLI for EC2 deployment
+                    // sh 'aws deploy create-deployment ...'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                def log = currentBuild.rawBuild.getLog(1000).join("\n")
+                emailext (
+                    subject: "Pipeline: ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                    body: """<p>The pipeline has finished with status: ${currentBuild.currentResult}</p>
+                             <p>Logs:</p><pre>${log}</pre>""",
+                    to: "${env.EMAIL_RECIPIENTS}",
+                    mimeType: 'text/html'
+                )
             }
         }
     }
